@@ -13,6 +13,7 @@ mongoose.connect("mongodb://localhost:27017/blogDB");
 const blogSchema = new mongoose.Schema({
 
     title: {
+        // <--== Validator for string==-->
         type: String,
         required: [true, "Why no title"]
     },
@@ -65,22 +66,22 @@ const blog4 = new Blog({
 //blog4.save();
 
 //Update datavalue
-Blog.updateOne({ _id: "633890a483173194883623a7" }, { title: "peach" }, function(err) {
-    if (err)
-        console.log(err);
-    else {
-        console.log("Successfully updated")
-    }
-});
+// Blog.updateOne({ _id: "633890a483173194883623a7" }, { title: "peach" }, function(err) {
+//     if (err)
+//         console.log(err);
+//     else {
+//         console.log("Successfully updated")
+//     }
+// });
 
 //<---...Delete data ...->
-Blog.deleteOne({ title: "peach" }, function(err) {
-    if (err)
-        console.log(err);
-    else {
-        console.log("Sucessfully deleted")
-    }
-})
+// Blog.deleteOne({ title: "peach" }, function(err) {
+//     if (err)
+//         console.log(err);
+//     else {
+//         console.log("Sucessfully deleted")
+//     }
+// })
 
 
 // <--- To find all data from database-->
@@ -90,7 +91,7 @@ Blog.find(function(err, blogs) {
         console.log(err);
 
     else {
-        mongoose.connection.close();
+        //  mongoose.connection.close();  (<--For close connection of mongoose-->)
         // console.log(blogs);
         blogs.forEach(function(blog) {
             console.log(blog.title);
@@ -101,16 +102,22 @@ Blog.find(function(err, blogs) {
 
 const authorSchema = new mongoose.Schema({
     Name: String,
-    age: Number
+    age: Number,
+    //adding embedded schema
+    favourite_blog: blogSchema
 });
 
 const Author = mongoose.model("Author", authorSchema);
 
 const author = new Author({
     Name: "Arif",
-    age: 21
+    age: 21,
+    favourite_blog: blog2
 });
 //author.save();
+
+
+
 
 
 var posts = [];

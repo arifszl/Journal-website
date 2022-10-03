@@ -1,18 +1,21 @@
 <%-include("partials/header.ejs")-%>
 
-<h1>Home</h1>
 
-<p><%= content%> </p>
 
-<!-- taking data from server -->
-<!-- using scirptlet tag to add javascript -->
-<%newpost.forEach(function(post){%> 
-  <!-- taking data from server using <%= %> tag -->
-  <h1><%= post.title%></h1> 
-  <p><%=post.text.substring(0,100)+ "..."  %>
-  <a href="/post/<%=post.title%>">Read more</a>
-  </p>
-<%})%>
 
-<!-- including headers and footer -->
-<%-include("partials/footer.ejs")-%>
+
+    <!-- taking data from server -->
+    <!-- using scirptlet tag to add javascript -->
+    <%newpost.forEach(function(post){%>
+        <!-- taking data from server using <%= %> tag -->
+        <h1>
+            <%= post.title%>
+        </h1>
+        <p>
+            <%=post.content.substring(0,100)+ "..."  %>
+                <a href="/post/<%=post.title%>">Read more</a>
+        </p>
+        <%})%>
+
+            <!-- including headers and footer -->
+            <%-include("partials/footer.ejs")-%>

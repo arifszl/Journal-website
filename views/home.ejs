@@ -6,14 +6,14 @@
 
     <!-- taking data from server -->
     <!-- using scirptlet tag to add javascript -->
-    <%newpost.forEach(function(post){%>
+    <%newposts.forEach(function(post){%>
         <!-- taking data from server using <%= %> tag -->
         <h1>
             <%= post.title%>
         </h1>
         <p>
             <%=post.content.substring(0,100)+ "..."  %>
-                <a href="/post/<%=post.title%>">Read more</a>
+                <a href="/post/<%=post._id%>">Read more</a>
         </p>
         <%})%>
 

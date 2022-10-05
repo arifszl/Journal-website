@@ -31,24 +31,24 @@ const blogSchema = new mongoose.Schema({
 const Blog = mongoose.model("Blog", blogSchema);
 
 // Create data for using model
-const blog1 = new Blog({
-    title: "Day1",
-    content: "Hey there welcome to my blog"
-        // rating: 10,
-        // review: "good knowledge"
-});
-const blog2 = new Blog({
-    title: "Day2",
-    content: "Hey there welcome to my blog"
-        // rating: 10,
-        // review: "good knowledge"
-});
-const blog3 = new Blog({
-    title: "Day3",
-    content: "Hey there welcome to my blog"
-        // rating: 10,
-        // review: "good knowledge"
-});
+// const blog1 = new Blog({
+//     title: "Day1",
+//     content: "Hey there welcome to my blog"
+//         // rating: 10,
+//         // review: "good knowledge"
+// });
+// const blog2 = new Blog({
+//     title: "Day2",
+//     content: "Hey there welcome to my blog"
+//         // rating: 10,
+//         // review: "good knowledge"
+// });
+// const blog3 = new Blog({
+//     title: "Day3",
+//     content: "Hey there welcome to my blog"
+//         // rating: 10,
+//         // review: "good knowledge"
+// });
 
 //    <--to save multiple entry-->
 // Blog.insertMany([blog1, blog2, blog3], function(err) {
@@ -99,7 +99,7 @@ const blog3 = new Blog({
 
 
 
-const dposts = [blog1, blog2, blog3];
+
 
 
 
@@ -114,26 +114,10 @@ app.use(express.static("public"));
 
 app.get("/", function(req, res) {
 
-    Blog.find({}, function(err, foundBlogs) {
-        if (foundBlogs.length == 0) {
-            Item.insertMany(dposts, function(err) {
-                if (err)
-                    console.log(err);
-                else {
-                    console.log("Successfully added");
-                }
-            });
-            res.redirect("/");
-        } else {
-            res.render("home", { newpost: foundBlogs });
-        }
 
-
-
-
+    Blog.find({}, function(err, blogs) {
+        res.render("home", { newposts: blogs })
     })
-
-
 
 });
 
@@ -150,6 +134,8 @@ app.get("/compose", function(req, res) {
 })
 
 
+
+
 app.post("/compose", function(req, res) {
 
         const post = {
@@ -160,26 +146,72 @@ app.post("/compose", function(req, res) {
             title: post.tit,
             content: post.text
         });
-        blog.save();
-        dposts.push(blog);
-        //  posts.push(post);
 
-        res.redirect("/")
+        blog.save(function(err) {
+            if (!err) {
+                res.redirect("/")
+            }
+        });
+
     })
     //to make diffrent routes using one route
-app.get("/post/:topic", function(req, res) {
+app.get("/post/:blogid", function(req, res) {
 
-    const topic = _.lowerCase(req.params.topic);
+    // console.log(req.params.blogid);
+    const reqblogid = req.params.blogid;
 
-    dposts.forEach(function(post) {
-        // console.log(post.title);
-        // console.log(post.content);
-        const pTitle = _.lowerCase(post.title);
-        if (pTitle === topic) {
-            res.render("post", { tit: post.title, top: post.content })
+    Blog.findOne({ _id: reqblogid }, function(err, blog) {
+        res.render("post", { tit: blog.title, top: blog.content, id: reqblogid })
+    })
+
+
+});
+app.get("/edit/:blogid", function(req, res) {
+
+    // console.log(req.params.blogid);
+    const reqblogid = req.params.blogid;
+
+    Blog.findOne({ _id: reqblogid }, function(err, blog) {
+        res.render("edit", { top: blog.content, id: reqblogid })
+    })
+
+
+
+
+})
+
+app.post("/delete", function(req, res) {
+
+
+    const id = req.body.del;
+    Blog.findByIdAndRemove(id, function(err) {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log("Removed Successfully");
+        }
+    });
+    res.redirect("/");
+
+})
+app.post("/update", function(req, res) {
+
+    const id = req.body.upd;
+    const cont = req.body.text;
+
+    Blog.findByIdAndUpdate(id, { content: cont }, function(err, docs) {
+        if (err)
+            console.log(err);
+        else {
+            console.log(docs);
         }
     })
+    res.redirect("/");
+
 })
+
+
+
 app.listen(8000, function() {
     console.log("Listening at 8000");
 })

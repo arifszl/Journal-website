@@ -1,7 +1,9 @@
+require('dotenv').config();
 const express = require("express");
 var _ = require("lodash");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
+const encrypt = require("mongoose-encryption");
 
 //     <-- fix part for mongoose -->
 const mongoose = require("mongoose");
@@ -9,6 +11,12 @@ const mongoose = require("mongoose");
 mongoose.connect("mongodb://localhost:27017/blogDB");
 
 
+const userSchema = new mongoose.Schema({
+    email: String,
+    password: String
+})
+userSchema.plugin(encrypt, { secret: process.env.SECRET, encryptedFields: ["password"] });
+const User = new mongoose.model("User", userSchema);
 // -----Defining Schema------
 const blogSchema = new mongoose.Schema({
 
@@ -132,9 +140,30 @@ app.get("/contact", function(req, res) {
 app.get("/compose", function(req, res) {
     res.render("compose");
 })
+app.get("/login", function(req, res) {
+    res.render("login");
+})
+app.get("/register", function(req, res) {
+    res.render("register");
+})
 
 
+app.post("/register", function(req, res) {
+    const email = req.body.username;
+    const pass = req.body.password;
 
+    const newUser = new User({
+        email: email,
+        password: pass
+    })
+    newUser.save(function(err) {
+        if (err)
+            console.log(err);
+        else {
+            res.render("/")
+        }
+    });
+});
 
 app.post("/compose", function(req, res) {
 
